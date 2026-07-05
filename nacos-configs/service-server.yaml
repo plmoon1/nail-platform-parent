@@ -1,0 +1,20 @@
+# ========================================
+# 服务管理 - Nacos 配置
+# 配置ID: service-server.yaml
+# 分组: NAIL_PLATFORM
+# ========================================
+
+server:
+  port: 8083
+
+# 服务降级配置
+spring:
+  cloud:
+    sentinel:
+      # 限流异常处理类
+      block-page: /block
+
+# 业务日志
+logging:
+  level:
+    com.nail.service: debug

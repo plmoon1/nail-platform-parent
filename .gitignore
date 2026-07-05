@@ -1,0 +1,47 @@
+# ---------- Maven ----------
+target/
+!.mvn/wrapper/maven-wrapper.jar
+!.mvn/wrapper/maven-wrapper.properties
+
+# ---------- Java ----------
+*.class
+hs_err_pid*
+replay_pid*
+
+# ---------- IntelliJ IDEA ----------
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+
+# ---------- Eclipse ----------
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings/
+.springBeans
+.sts4-cache
+bin/
+
+# ---------- VS Code ----------
+.vscode/
+
+# ---------- OS ----------
+.DS_Store
+Thumbs.db
+
+# ---------- 日志 ----------
+*.log
+logs/
+
+# ---------- 前端 ----------
+node_modules/
+dist/
+.unoapp/
+unpackage/
+
+# ---------- 本地配置 ----------
+**/application-local.yml
+application-local.yml.template

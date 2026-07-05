@@ -1,0 +1,93 @@
+server:
+  port: 8080
+
+spring:
+  main:
+    allow-bean-definition-overriding: true
+  # Redis（Sa-Token 共享会话）
+  redis:
+    host: ${REDIS_HOST:127.0.0.1}
+    port: ${REDIS_PORT:6379}
+    database: ${REDIS_DB:0}
+    timeout: 5000
+    lettuce:
+      pool:
+        max-active: 8
+        max-idle: 8
+        min-idle: 0
+  cloud:
+    sentinel:
+      transport:
+        dashboard: ${SENTINEL_DASH:127.0.0.1:8858}
+      eager: true
+      filter:
+        enabled: false   # 使用 Sentinel-Gateway 网关限流，关闭普通 WebFilter
+    gateway:
+      discovery:
+        locator:
+          enabled: false            # 关闭“按服务名自动路由”，使用下方显式路由
+          lower-case-service-id: true
+      # 跨域（前端直接访问网关时生效）
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowed-origin-patterns: '*'
+            allowed-methods: '*'
+            allowed-headers: '*'
+            allow-credentials: true
+            max-age: 3600
+      # 路由：/api/{服务}/** 剥离第一段前缀转发到对应服务
+      routes:
+        - id: auth-server
+          uri: lb://auth-server
+          predicates:
+            - Path=/api/auth/**
+          filters:
+            - StripPrefix=1
+        - id: user-server
+          uri: lb://user-server
+          predicates:
+            - Path=/api/user/**
+          filters:
+            - StripPrefix=1
+        - id: service-server
+          uri: lb://service-server
+          predicates:
+            - Path=/api/service/**
+          filters:
+            - StripPrefix=1
+        - id: reserve-server
+          uri: lb://reserve-server
+          predicates:
+            - Path=/api/reserve/**
+          filters:
+            - StripPrefix=1
+        - id: marketing-server
+          uri: lb://marketing-server
+          predicates:
+            - Path=/api/marketing/**
+          filters:
+            - StripPrefix=1
+        - id: notice-server
+          uri: lb://notice-server
+          predicates:
+            - Path=/api/notice/**
+          filters:
+            - StripPrefix=1
+
+# Sa-Token（响应式）
+sa-token:
+  token-name: Authorization
+  timeout: 2592000
+  active-timeout: -1
+  is-concurrent: true
+  is-share: true
+  token-style: uuid
+  is-log: false
+  is-read-cookie: false
+  is-read-header: true
+
+logging:
+  level:
+    com.nail.platform: debug
+    org.springframework.cloud.gateway: info

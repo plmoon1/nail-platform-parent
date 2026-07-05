@@ -1,0 +1,21 @@
+spring:
+  application:
+    name: marketing-server
+  profiles:
+    active: dev
+  cloud:
+    nacos:
+      discovery:
+        server-addr: ${NACOS_ADDR:127.0.0.1:8848}
+        namespace: ${NACOS_NAMESPACE:public}
+        group: NAIL_PLATFORM
+      config:
+        server-addr: ${NACOS_ADDR:127.0.0.1:8848}
+        namespace: ${NACOS_NAMESPACE:public}
+        group: NAIL_PLATFORM
+        file-extension: yaml
+        # 共享配置（会自动加载 nail-platform-common.yaml）
+        shared-configs:
+          - data-id: nail-platform-common.yaml
+            group: NAIL_PLATFORM
+            refresh: true

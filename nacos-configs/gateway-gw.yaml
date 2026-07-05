@@ -1,0 +1,110 @@
+# ========================================
+# 网关服务 - Nacos 配置
+# 配置ID: gateway-gw.yaml
+# 分组: NAIL_PLATFORM
+# ========================================
+
+server:
+  port: 8080
+
+spring:
+  main:
+    allow-bean-definition-overriding: true
+  cloud:
+    # Sentinel 网关限流配置
+    sentinel:
+      filter:
+        enabled: false   # 使用 Sentinel-Gateway 网关限流，关闭普通 WebFilter
+      datasource:
+        # 网关流控规则
+        gateway-flow:
+          nacos:
+            server-addr: ${NACOS_ADDR:127.0.0.1:8848}
+            namespace: ${NACOS_NAMESPACE:public}
+            group-id: NAIL_PLATFORM
+            data-id: gateway-gw-sentinel-flow.json
+            rule-type: gateway-flow
+        # API 分组限流
+        gateway-api:
+          nacos:
+            server-addr: ${NACOS_ADDR:127.0.0.1:8848}
+            namespace: ${NACOS_NAMESPACE:public}
+            group-id: NAIL_PLATFORM
+            data-id: gateway-gw-sentinel-api.json
+            rule-type: gateway-api
+    gateway:
+      discovery:
+        locator:
+          enabled: false            # 关闭"按服务名自动路由"
+          lower-case-service-id: true
+      # 全局跨域配置
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowed-origin-patterns: '*'
+            allowed-methods: '*'
+            allowed-headers: '*'
+            allow-credentials: true
+            max-age: 3600
+      # 路由配置：/api/{服务}/** 剥离第一段前缀转发到对应服务
+      routes:
+        # 认证服务
+        - id: auth-server
+          uri: lb://auth-server
+          predicates:
+            - Path=/api/auth/**
+          filters:
+            - StripPrefix=1
+            - name: Retry
+              args:
+                retries: 3
+                statuses: BAD_GATEWAY,SERVICE_UNAVAILABLE
+        # 用户服务
+        - id: user-server
+          uri: lb://user-server
+          predicates:
+            - Path=/api/user/**
+          filters:
+            - StripPrefix=1
+        # 服务管理
+        - id: service-server
+          uri: lb://service-server
+          predicates:
+            - Path=/api/service/**
+          filters:
+            - StripPrefix=1
+        # 预约服务
+        - id: reserve-server
+          uri: lb://reserve-server
+          predicates:
+            - Path=/api/reserve/**
+          filters:
+            - StripPrefix=1
+        # 营销服务
+        - id: marketing-server
+          uri: lb://marketing-server
+          predicates:
+            - Path=/api/marketing/**
+          filters:
+            - StripPrefix=1
+        # 通知服务
+        - id: notice-server
+          uri: lb://notice-server
+          predicates:
+            - Path=/api/notice/**
+          filters:
+            - StripPrefix=1
+
+# Sa-Token 响应式配置
+sa-token:
+  is-read-cookie: false
+  is-read-header: true
+  # 响应式特有配置
+  together: true
+
+# 网关日志
+logging:
+  level:
+    org.springframework.cloud.gateway: info
+    com.alibaba.nacos.client.naming: warn
+    com.alibaba.nacos.client.config: warn

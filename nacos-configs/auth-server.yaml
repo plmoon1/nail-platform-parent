@@ -1,0 +1,27 @@
+# ========================================
+# 认证服务 - Nacos 配置
+# 配置ID: auth-server.yaml
+# 分组: NAIL_PLATFORM
+# ========================================
+
+server:
+  port: 8081
+
+# Sa-Token 配置
+sa-token:
+  # 令牌自定义前缀（注意： bearer 是 Sa-Token 官方推荐的前缀）
+  token-prefix: bearer
+  # 是否打印操作日志
+  is-log: true
+
+# 服务降级配置
+spring:
+  cloud:
+    sentinel:
+      # 限流异常处理类
+      block-page: /block
+
+# 业务日志
+logging:
+  level:
+    com.nail.auth: debug

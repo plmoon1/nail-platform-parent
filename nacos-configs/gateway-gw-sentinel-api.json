@@ -1,0 +1,29 @@
+[
+  {
+    "apiName": "user-api",
+    "predicateItems": [
+      {
+        "pattern": "/api/user/**",
+        "matchStrategy": 0
+      }
+    ]
+  },
+  {
+    "apiName": "reserve-api",
+    "predicateItems": [
+      {
+        "pattern": "/api/reserve/**",
+        "matchStrategy": 0
+      }
+    ]
+  },
+  {
+    "apiName": "auth-api",
+    "predicateItems": [
+      {
+        "pattern": "/api/auth/**",
+        "matchStrategy": 0
+      }
+    ]
+  }
+]
